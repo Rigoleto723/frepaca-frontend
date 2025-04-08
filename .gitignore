@@ -34,3 +34,6 @@ dist-ssr
 
 # environment
 .env
+
+# archivos de la carpeta assets
+src/assets

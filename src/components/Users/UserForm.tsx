@@ -161,7 +161,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onClose }) => {
                             />
                         </div>
                         <div>
-                            <label className="block text-white mb-1">Nombre</label>
+                            <label className="block text-white mb-1">Nombres</label>
                             <input
                                 type="text"
                                 name="first_name"
@@ -172,7 +172,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onClose }) => {
                             />
                         </div>
                         <div>
-                            <label className="block text-white mb-1">Apellido</label>
+                            <label className="block text-white mb-1">Apellidos</label>
                             <input
                                 type="text"
                                 name="last_name"
@@ -193,9 +193,7 @@ const UserForm: React.FC<UserFormProps> = ({ user, onClose }) => {
                             >
                                 <option value="">Seleccione un grupo</option>
                                 <option value="admin">Admin</option>
-                                <option value="seller">Ventas</option>
-                                <option value="driver">Conductor</option>
-                                <option value="logistics">Logística</option>
+                                <option value="user">Usuario</option>
                             </select>
                         </div>
                         <div>

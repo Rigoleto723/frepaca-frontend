@@ -2,11 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { useSession } from '../../context/sessionContext';
-import { ErrorBoundary } from 'react-error-boundary';
-import ErrorFallback from '../ErrorFallback';
 import client from '../../axiosConfig';
 import useUsers from '../../hooks/useUsers';
-import { User } from '../../interface/User';
 
 interface UserProfileData {
     username: string;
@@ -59,9 +56,16 @@ function UserProfileContent() {
         e.preventDefault();
         setIsSaving(true);
 
+        if (!user?.id || !user?.username) {
+            toast.error('No se pudo obtener la información del usuario');
+            setIsSaving(false);
+            return;
+        }
+
         try {
             await editUser({
-                ...user,
+                id: user.id,
+                username: user.username,
                 first_name: userData.first_name,
                 last_name: userData.last_name,
                 email: userData.email
@@ -269,11 +273,6 @@ function UserProfileContent() {
 
 export default function UserProfile() {
     return (
-        <ErrorBoundary
-            FallbackComponent={ErrorFallback}
-            onReset={() => window.location.reload()}
-        >
-            <UserProfileContent />
-        </ErrorBoundary>
+        <UserProfileContent />
     );
 } 

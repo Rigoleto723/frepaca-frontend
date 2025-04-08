@@ -1,58 +1,62 @@
 import React, { useState } from 'react';
-import useCustomers from '../../hooks/useCustomers';
-import { Customer } from '../../interfaces/Customer';
-import CustomerForm from './CustomerForm';
+import useLoans from '../../hooks/useLoans';
+import { Loan } from '../../interfaces/Loan';
+import LoansForm from './LoansForm';
 import { toast } from 'react-hot-toast';
 import { Button } from '../ui/button'
 
-const Customers: React.FC = () => {
+const Loans: React.FC = () => {
     const {
-        customers,
+        loans,
         loading,
         error: hookError,
-        reloadCustomers,
-        createCustomer,
-        updateCustomer,
-        deleteCustomer
-    } = useCustomers();
+        reloadLoans,
+        createLoan,
+        updateLoan,
+        deleteLoan
+    } = useLoans();
 
     const [formError, setFormError] = useState<string | null>(null);
     const [showForm, setShowForm] = useState(false);
-    const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>(undefined);
+    const [selectedLoan, setSelectedLoan] = useState<Loan | undefined>(undefined);
     const [searchTerm, setSearchTerm] = useState("")
 
     // Filtrar clientes por zona
-    const filteredCustomers = customers?.filter(customer => {
-        const matchesSearch = customer.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.apellido?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.telefono.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.ciudad.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            customer.direccion.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredLoans = loans?.filter(loan => {
+        const matchesSearch = loan.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            loan.montoInicial.toString().includes(searchTerm) ||
+            loan.saldoActual.toString().includes(searchTerm) ||
+            loan.tasaInteresMensual.toString().includes(searchTerm) ||
+            loan.interesMensualGenerado.toString().includes(searchTerm) ||
+            loan.fechaInicio.toString().includes(searchTerm) ||
+            loan.fechaFin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            loan.fechaCreacion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            loan.fechaActualizacion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            loan.estado.toLowerCase().includes(searchTerm.toLowerCase())
         return matchesSearch
     })
 
     // Manejar guardado de cliente (crear o actualizar)
-    const handleSaveCustomer = async (customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const handleSaveLoan = async (loanData: Omit<Loan, 'id' | 'createdAt' | 'updatedAt'>) => {
         try {
-            if (selectedCustomer) {
+            if (selectedLoan) {
                 // Actualizar cliente existente
-                await updateCustomer({
-                    ...customerData,
-                    id: selectedCustomer.id,
-                    fechaCreacion: selectedCustomer.fechaCreacion,
+                await updateLoan({
+                    ...loanData,
+                    id: selectedLoan.id,
+                    fechaCreacion: selectedLoan.fechaCreacion,
                     fechaActualizacion: new Date().toISOString()
                 });
                 toast.success('Cliente actualizado con éxito');
             } else {
                 // Crear nuevo cliente
-                await createCustomer(customerData);
+                await createLoan(loanData);
                 toast.success('Cliente creado con éxito');
             }
             setShowForm(false);
-            setSelectedCustomer(undefined);
+            setSelectedLoan(undefined);
             // Recargar la lista de clientes para asegurar que tenemos los datos más recientes
-            await reloadCustomers();
+            await reloadLoans();
         } catch (err) {
             console.error('Error al guardar cliente:', err);
             setFormError('Error al guardar el cliente. Por favor, intenta de nuevo.');
@@ -61,10 +65,10 @@ const Customers: React.FC = () => {
     };
 
     // Manejar eliminación de cliente
-    const handleDeleteCustomer = async (id: string) => {
-        if (window.confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
+    const handleDeleteLoan = async (id: string) => {
+        if (window.confirm('¿Estás seguro de que deseas eliminar este préstamo?')) {
             try {
-                await deleteCustomer(id);
+                await deleteLoan(id);
                 alert('Cliente eliminado con éxito');
                 // No es necesario recargar los clientes ya que deleteCustomer actualiza el estado
             } catch (err) {
@@ -74,12 +78,12 @@ const Customers: React.FC = () => {
         }
     };
 
-    if (loading && customers.length === 0) {
+    if (loading && loans.length === 0) {
         return (
             <div className="p-6">
                 <div className="text-center py-10">
                     <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500 mb-2"></div>
-                    <p>Cargando clientes...</p>
+                    <p>Cargando préstamos...</p>
                 </div>
             </div>
         );
@@ -88,15 +92,15 @@ const Customers: React.FC = () => {
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-3xl font-bold">Gestión de Clientes</h1>
+                <h1 className="text-3xl font-bold">Gestión de Préstamos</h1>
                 <Button
                     variant={'add'}
                     onClick={() => {
-                        setSelectedCustomer(undefined);
+                        setSelectedLoan(undefined);
                         setShowForm(true);
                     }}
                 >
-                    Nuevo Cliente
+                    Nuevo Préstamo
                 </Button>
             </div>
 
@@ -119,7 +123,7 @@ const Customers: React.FC = () => {
             <div className="mb-6 flex gap-4">
                 <input
                     type="text"
-                    placeholder="Buscar clientes..."
+                    placeholder="Buscar préstamos..."
                     className="px-4 py-2 border rounded-lg flex-1 bg-gray-900"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -127,66 +131,67 @@ const Customers: React.FC = () => {
             </div>
 
 
-            {filteredCustomers.length === 0 ? (
+            {filteredLoans.length === 0 ? (
                 <div className="text-center py-10 bg-gray-800 rounded-lg">
-                    <p className="text-gray-500">No se encontraron clientes.</p>
+                    <p className="text-gray-500">No se encontraron préstamos.</p>
                 </div>
             ) : (
                 <div className="overflow-x-auto">
                     <table className="min-w-full bg-black divide-y divide-gray-700">
                         <thead className="bg-gray-800">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Nombre</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Contacto</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Ciudad y Dirección</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cliente</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Monto Inicial</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Saldo Actual</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tasa de Interés Mensual</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Estado</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Acciones</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-700">
-                            {filteredCustomers.map((customer) => (
-                                <tr key={customer.id}>
+                            {filteredLoans.map((loan) => (
+                                <tr key={loan.id}>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div>
                                             <div className="text-sm font-medium">
-                                                {customer.nombre} {customer.apellido}
+                                                {loan.cliente}
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div>
                                             <div className="text-sm font-medium">
-                                                {customer.telefono}
+                                                {loan.montoInicial}
                                             </div>
-                                            {customer.email && (
+                                            {loan.saldoActual && (
                                                 <div className="text-sm">
-                                                    {customer.email}
+                                                    {loan.saldoActual}
                                                 </div>
                                             )}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full`}>
-                                            {customer.ciudad} - {customer.direccion}
+                                            {loan.tasaInteresMensual}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${customer.estado === 'Activo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${loan.estado === 'Activo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                             }`}>
-                                            {customer.estado === 'Activo' ? 'Activo' : 'Inactivo'}
+                                            {loan.estado === 'Activo' ? 'Activo' : 'Inactivo'}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-x-2">
                                         <Button
                                             onClick={() => {
-                                                setSelectedCustomer(customer);
+                                                setSelectedLoan(loan);
                                                 setShowForm(true);
                                             }}
                                             variant={'edit'}
                                         >
                                         </Button>
                                         <Button
-                                            onClick={() => handleDeleteCustomer(customer.id.toString())}
+                                            onClick={() => handleDeleteLoan(loan.id.toString())}
                                             variant={'delete'}
                                         >
                                         </Button>
@@ -199,12 +204,12 @@ const Customers: React.FC = () => {
             )}
 
             {showForm && (
-                <CustomerForm
-                    customer={selectedCustomer}
-                    onSave={handleSaveCustomer}
+                <LoansForm
+                    loan={selectedLoan}
+                    onSave={handleSaveLoan}
                     onClose={() => {
                         setShowForm(false);
-                        setSelectedCustomer(undefined);
+                        setSelectedLoan(undefined);
                     }}
                 />
             )}
@@ -212,4 +217,4 @@ const Customers: React.FC = () => {
     );
 };
 
-export default Customers; 
+export default Loans; 

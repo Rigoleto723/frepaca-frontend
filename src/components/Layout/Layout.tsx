@@ -1,10 +1,10 @@
-import { IconCards, IconChevronDown, IconCoin, IconDashboard, IconDoorExit, IconPackage, IconSettings2, IconUserCog, IconUsers, IconChartBar, IconTag, IconTruck, IconTruckDelivery } from "@tabler/icons-react";
+import { ChevronDown, Coins, LogOut, Settings2, UserCog, Users, ChartBar, LayoutDashboard } from "lucide-react";
 import { ReactNode, useRef, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "../../context/sessionContext";
 import client from "../../axiosConfig";
 import SidebarItem from "./SidebarItem";
-import logotipo from "../../assets/logo.jpeg"
+import logotipo from "../../assets/logo frepaca.jpeg"
 
 export interface SidebarItemInfo {
     icon: ReactNode,
@@ -17,27 +17,27 @@ const sidebarList: SidebarItemInfo[] = [
     {
         path: "/app/dashboard",
         name: "Dashboard",
-        icon: <IconDashboard />,
-        groups: ['admin', 'seller', 'logistic']
+        icon: <LayoutDashboard />,
+        groups: ['admin', 'user']
     },
     {
         path: "/app/loans",
         name: "Prestamos",
-        icon: <IconCoin />,
-        groups: ['admin', 'seller']
+        icon: <Coins />,
+        groups: ['admin', 'user']
     },
 
     {
         path: "/app/customers",
         name: "Clientes",
-        icon: <IconUsers />,
-        groups: ['admin', 'seller']
+        icon: <Users />,
+        groups: ['admin', 'user']
     },
     {
         path: "/app/reports",
         name: "Reportes",
-        icon: <IconChartBar />,
-        groups: ['admin']
+        icon: <ChartBar />,
+        groups: ['admin', 'user']
     },
 
 ]
@@ -102,7 +102,7 @@ const Layout = () => {
                     {/* Perfil siempre visible */}
                     <SidebarItem
                         item={{
-                            icon: <IconUserCog />,
+                            icon: <UserCog />,
                             name: 'Mi Perfil',
                             path: '/app/profile'
                         }}
@@ -116,17 +116,17 @@ const Layout = () => {
                             <div className="pb-3 flex flex-row justify-between text-gray-500 cursor-pointer hover:text-gray-400"
                                 onClick={() => setOpenConfig(!openConfig)}>
                                 <div className="flex flex-row gap-3">
-                                    <IconSettings2 />
+                                    <Settings2 />
                                     Configuración
                                 </div>
-                                <IconChevronDown className={`${openConfig ? "rotate-180" : 'rotate-0'} transition-all`} />
+                                <ChevronDown className={`${openConfig ? "rotate-180" : 'rotate-0'} transition-all`} />
                             </div>
                             <div className={`transition-all duration-300 ease-in-out overflow-hidden`}
                                 style={{ height: openConfig ? ref.current?.offsetHeight || 0 : 0 }}>
                                 <div className="pl-3" ref={ref}>
                                     <SidebarItem
                                         item={{
-                                            icon: <IconUserCog />,
+                                            icon: <UserCog />,
                                             name: 'Usuarios',
                                             path: '/app/users'
                                         }}
@@ -141,7 +141,7 @@ const Layout = () => {
 
                     <div className="flex flex-row gap-3 text-gray-500 pb-3 cursor-pointer hover:text-gray-400"
                         onClick={handleLogout}>
-                        <IconDoorExit />
+                        <LogOut />
                         Cerrar Sesión
                     </div>
                 </div>

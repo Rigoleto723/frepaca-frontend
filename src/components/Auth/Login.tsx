@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useSession } from "../../context/sessionContext";
 import client from "../../axiosConfig";
-import logotipo from "../../assets/logo.jpeg";
+import logotipo from "../../assets/logo frepaca.jpeg";
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState("");

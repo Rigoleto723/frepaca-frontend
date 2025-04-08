@@ -4,6 +4,7 @@ import Dashboard from "./components/Dashboard/Dashboard"
 import Users from "./components/Users/Users"
 import Layout from "./components/Layout/Layout"
 import Customers from "./components/Customers/Customers"
+import Loans from "./components/Loans/Loans"
 import { useEffect, useState } from "react";
 import { useSession } from "./context/sessionContext";
 import UserProfile from "./components/Users/UserProfile";
@@ -40,6 +41,7 @@ const RootStack = () => {
     <Routes>
       <Route path="/app" element={<Layout />}>
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="loans" element={<Loans />} />
         <Route path="users" element={<Users />} />
         <Route path="profile" element={<UserProfile />} />
         <Route path="customers" element={<Customers />} />

@@ -1,4 +1,4 @@
-import { IconSettings2 } from "@tabler/icons-react";
+import { Settings2 } from "lucide-react";
 import { SidebarItemInfo } from "./Layout";
 
 const SidebarItem = ({ item, active, onClick, config = false }: { item: SidebarItemInfo, active: boolean, onClick: () => void, config?: boolean }) => (
@@ -6,7 +6,7 @@ const SidebarItem = ({ item, active, onClick, config = false }: { item: SidebarI
         <div className="relative">
             {item.icon}
             {config && <div className="absolute bottom-0 right-0 bg-black rounded-lg">
-                <IconSettings2 size={"0.7em"} />
+                <Settings2 size={"0.7em"} />
             </div>}
         </div>
         {item.name}
