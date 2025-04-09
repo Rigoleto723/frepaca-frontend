@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import Select from "react-select";
 import { Loan } from '../../interfaces/Loan';
 import { Button } from '../ui/button'
+import { Customer } from '../../interfaces/Customer';
+import useCustomers from '../../hooks/useCustomers';
 
 
 interface LoansFormProps {
@@ -10,10 +13,10 @@ interface LoansFormProps {
 }
 
 const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
-
+    const { customers, loading: loadingCustomers } = useCustomers();
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<Omit<Loan, 'id' | 'createdAt' | 'updatedAt'>>({
-        cliente: loan?.cliente || '',
+        cliente: loan?.cliente || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
         montoInicial: loan?.montoInicial || 0,
         saldoActual: loan?.saldoActual || 0,
         tasaInteresMensual: loan?.tasaInteresMensual || 0,
@@ -65,8 +68,8 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
         setError(null);
 
         // Validaciones básicas
-        if (!formData.cliente.trim()) {
-            setError('El nombre es obligatorio');
+        if (!formData.cliente.id) {
+            setError('El cliente es obligatorio');
             return;
         }
 
@@ -82,6 +85,26 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
 
         // Enviar datos al componente padre
         onSave(formData);
+    };
+
+    const customerOptions = useMemo(() => {
+        return customers.map(customer => ({
+            value: customer.id,
+            label: `${customer.nombre} ${customer.apellido} - ${customer.numeroDocumento}`,
+            customer: customer
+        }));
+    }, [customers]);
+
+    const selectedCustomerOption = useMemo(() => {
+        if (!formData.cliente) return null;
+        return customerOptions.find(option => option.value === formData.cliente.id);
+    }, [formData.cliente, customerOptions]);
+
+    const handleCustomerChange = (selectedOption: { value: number; label: string; customer: Customer } | null) => {
+        setFormData(prev => ({
+            ...prev,
+            cliente: selectedOption ? selectedOption.customer : { id: 0, nombre: '', apellido: '', numeroDocumento: '' }
+        }));
     };
 
     return (
@@ -109,13 +132,55 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div className="mb-4">
                             <label className="block text-gray-300 mb-2">Cliente</label>
-                            <input
-                                type="text"
-                                name="cliente"
-                                value={formData.cliente}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded bg-gray-800 text-white"
+                            <Select
+                                value={selectedCustomerOption}
+                                onChange={handleCustomerChange}
                                 required
+                                options={customerOptions}
+                                isDisabled={loadingCustomers}
+                                isLoading={loadingCustomers}
+                                placeholder="Selecciona un cliente"
+                                noOptionsMessage={() => loadingCustomers ? 'Cargando clientes...' : 'No hay clientes disponibles'}
+                                styles={{
+                                    container: (base) => ({
+                                        ...base,
+                                        width: '100%'
+                                    }),
+                                    control: (base) => ({
+                                        ...base,
+                                        background: '#374151',
+                                        borderColor: '#4B5563',
+                                        '&:hover': {
+                                            borderColor: '#6B7280'
+                                        }
+                                    }),
+                                    menu: (base) => ({
+                                        ...base,
+                                        background: '#374151',
+                                        border: '1px solid #4B5563'
+                                    }),
+                                    option: (base, state) => ({
+                                        ...base,
+                                        background: state.isFocused ? '#4B5563' : '#374151',
+                                        color: 'white',
+                                        '&:hover': {
+                                            background: '#4B5563'
+                                        }
+                                    }),
+                                    singleValue: (base) => ({
+                                        ...base,
+                                        color: 'white'
+                                    }),
+                                    input: (base) => ({
+                                        ...base,
+                                        color: 'white'
+                                    }),
+                                    placeholder: (base) => ({
+                                        ...base,
+                                        color: '#9CA3AF'
+                                    })
+                                }}
+
                             />
                         </div>
 
@@ -125,25 +190,33 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                                 type="number"
                                 name="montoInicial"
                                 value={formData.montoInicial}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                    const value = parseFloat(e.target.value);
+                                    handleChange(e);
+                                    // Si es un nuevo préstamo (no hay loan existente), actualiza el saldo actual
+                                    if (!loan) {
+                                        setFormData(prev => ({
+                                            ...prev,
+                                            saldoActual: value
+                                        }));
+                                    }
+                                }}
                                 className="w-full p-2 border rounded bg-gray-800 text-white"
                             />
                         </div>
 
-                        <div className="mb-4">
-                            <label className="block text-gray-300 mb-2">Saldo Actual</label>
-                            <select
-                                name="saldoActual"
-                                value={formData.saldoActual}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded bg-gray-800 text-white"
-                            >
-                                <option value="CC">Cédula de Ciudadanía</option>
-                                <option value="NIT">NIT</option>
-                                <option value="CE">Cédula de Extranjería</option>
-                                <option value="PP">Pasaporte</option>
-                            </select>
-                        </div>
+                        {loan && (
+                            <div className="mb-4">
+                                <label className="block text-gray-300 mb-2">Saldo Actual</label>
+                                <input
+                                    type="number"
+                                    name="saldoActual"
+                                    value={formData.saldoActual}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded bg-gray-800 text-white"
+                                />
+                            </div>
+                        )}
 
                         <div className="mb-4">
                             <label className="block text-gray-300 mb-2">Tasa de Interés Mensual</label>
@@ -156,16 +229,15 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                                 required
                             />
                         </div>
-
                         <div className="mb-4">
                             <label className="block text-gray-300 mb-2">Intereses Mensuales Generados</label>
                             <input
                                 type="text"
                                 name="interesMensualGenerado"
-                                value={formData.interesMensualGenerado}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded bg-gray-800 text-white"
-                                required
+                                value={(formData.montoInicial * formData.tasaInteresMensual / 100).toFixed(2)}
+                                className="w-full p-2 border rounded bg-gray-800 text-white bg-gray-700"
+                                disabled
+                                readOnly
                             />
                         </div>
 
@@ -180,27 +252,18 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                             />
                         </div>
 
-                        <div className="mb-4">
-                            <label className="block text-gray-300 mb-2">Fecha de Fin</label>
-                            <input
-                                type="text"
-                                name="fechaFin"
-                                value={formData.fechaFin}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded bg-gray-800 text-white"
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-gray-300 mb-2">Fecha de Creación</label>
-                            <input
-                                type="text"
-                                name="fechaCreacion"
-                                value={formData.fechaCreacion}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded bg-gray-800 text-white"
-                            />
-                        </div>
+                        {loan && (
+                            <div className="mb-4">
+                                <label className="block text-gray-300 mb-2">Fecha de Fin</label>
+                                <input
+                                    type="text"
+                                    name="fechaFin"
+                                    value={formData.fechaFin}
+                                    onChange={handleChange}
+                                    className="w-full p-2 border rounded bg-gray-800 text-white"
+                                />
+                            </div>
+                        )}
 
                         <div className="mb-4">
                             <label className="block text-gray-300 mb-2">Estado</label>

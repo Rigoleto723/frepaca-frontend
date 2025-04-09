@@ -23,16 +23,7 @@ const Loans: React.FC = () => {
 
     // Filtrar clientes por zona
     const filteredLoans = loans?.filter(loan => {
-        const matchesSearch = loan.cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            loan.montoInicial.toString().includes(searchTerm) ||
-            loan.saldoActual.toString().includes(searchTerm) ||
-            loan.tasaInteresMensual.toString().includes(searchTerm) ||
-            loan.interesMensualGenerado.toString().includes(searchTerm) ||
-            loan.fechaInicio.toString().includes(searchTerm) ||
-            loan.fechaFin.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            loan.fechaCreacion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            loan.fechaActualizacion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            loan.estado.toLowerCase().includes(searchTerm.toLowerCase())
+        const matchesSearch = loan.cliente.nombre.toLowerCase().includes(searchTerm.toLowerCase()) || loan.cliente.apellido.toLowerCase().includes(searchTerm.toLowerCase()) || loan.cliente.numeroDocumento.toLowerCase().includes(searchTerm.toLowerCase())
         return matchesSearch
     })
 
@@ -154,7 +145,7 @@ const Loans: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div>
                                             <div className="text-sm font-medium">
-                                                {loan.cliente}
+                                                {loan.cliente.nombre} {loan.cliente.apellido} - {loan.cliente.numeroDocumento}
                                             </div>
                                         </div>
                                     </td>
@@ -163,17 +154,16 @@ const Loans: React.FC = () => {
                                             <div className="text-sm font-medium">
                                                 {loan.montoInicial}
                                             </div>
-                                            {loan.saldoActual && (
-                                                <div className="text-sm">
-                                                    {loan.saldoActual}
-                                                </div>
-                                            )}
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full`}>
-                                            {loan.tasaInteresMensual}
+                                            {loan.saldoActual}
                                         </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        {loan.tasaInteresMensual}
+
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${loan.estado === 'Activo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

@@ -1,6 +1,6 @@
 export interface Loan {
     id: string;
-    cliente: string;
+    cliente: { id: number, nombre: string, apellido: string, numeroDocumento: string };
     montoInicial: number;
     saldoActual: number;
     tasaInteresMensual: number;
