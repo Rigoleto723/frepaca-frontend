@@ -10,6 +10,8 @@ import { useSession } from "./context/sessionContext";
 import UserProfile from "./components/Users/UserProfile";
 import LoansDetail from "./components/Loans/LoansDetail";
 import Pays from "./components/Pays/Pays";
+import Reports from "./components/Reports/Reports";
+
 const RootStack = () => {
   const { accessToken, user } = useSession();
   const [isLoading, setIsLoading] = useState(true);
@@ -48,6 +50,7 @@ const RootStack = () => {
         <Route path="users" element={<Users />} />
         <Route path="profile" element={<UserProfile />} />
         <Route path="customers" element={<Customers />} />
+        <Route path="reports" element={<Reports />} />
       </Route>
       <Route path="*" element={<Navigate to="/app/dashboard" replace />} />
     </Routes>
