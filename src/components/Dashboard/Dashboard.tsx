@@ -1,9 +1,6 @@
 import React from 'react';
 import { useDashboard } from '../../hooks/useDashboard';
 import { DashboardCard } from './DashboardCard';
-import { SalesChart } from './SalesChart';
-import { InventoryAlert } from './InventoryAlert';
-import { DeliveryPerformance } from './DeliveryPerformance';
 import { formatCurrency } from '../../utils/formatters';
 
 const Dashboard: React.FC = () => {
@@ -26,49 +23,44 @@ const Dashboard: React.FC = () => {
     return (
         <div className="container mx-auto px-4 py-8">
             <h1 className="text-2xl font-bold text-white mb-6">Dashboard</h1>
-
-            {/* KPIs Principales */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <DashboardCard
-                    title="Ventas del Día"
-                    value={formatCurrency(data.sales.today)}
+                    title="Total Invertido"
+                    value={formatCurrency(data.totalInvertido)}
                     icon="💰"
                 />
                 <DashboardCard
-                    title="Órdenes Pendientes"
-                    value={data.orders.byStatus.pending}
+                    title="Total Intereses"
+                    value={formatCurrency(data.totalIntereses)}
+                    icon="📈"
+                />
+                <DashboardCard
+                    title="Préstamos Activos"
+                    value={data.totalPrestamosActivos}
                     icon="📋"
                 />
                 <DashboardCard
-                    title="Tasa de Entrega"
-                    value={`${Math.round((data.delivery.performance.reduce((acc, curr) => acc + (curr.deliveredOrders / curr.totalOrders), 0) / data.delivery.performance.length) * 100)}%`}
-                    icon="🚚"
+                    title="Préstamos Pagados"
+                    value={data.totalPrestamosPagados}
+                    icon="✅"
+                />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <DashboardCard
+                    title="Cobros Pendientes"
+                    value={data.totalCobrosPendientes}
+                    icon="⏳"
                 />
                 <DashboardCard
-                    title="Ventas del Mes"
-                    value={formatCurrency(data.sales.thisMonth)}
-                    icon="📈"
+                    title="Pagos Hoy"
+                    value={data.totalPagosHoy}
+                    icon="📅"
                 />
-            </div>
-
-            {/* Gráficos y Estadísticas */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <div className="bg-gray-800 p-4 rounded-lg">
-                    <h2 className="text-xl font-semibold text-white mb-4">Ventas por Producto</h2>
-                    <SalesChart data={data.sales.byProduct} />
-                </div>
-            </div>
-
-            {/* Alertas y Rendimiento */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-gray-800 p-4 rounded-lg">
-                    <h2 className="text-xl font-semibold text-white mb-4">Alertas de Stock</h2>
-                    <InventoryAlert data={data.inventory.lowStock} />
-                </div>
-                <div className="bg-gray-800 p-4 rounded-lg">
-                    <h2 className="text-xl font-semibold text-white mb-4">Rendimiento por Ruta</h2>
-                    <DeliveryPerformance data={data.delivery.performance} />
-                </div>
+                <DashboardCard
+                    title="Monto Pagos Hoy"
+                    value={formatCurrency(data.montoPagosHoy)}
+                    icon="💵"
+                />
             </div>
         </div>
     );
