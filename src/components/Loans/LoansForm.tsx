@@ -16,12 +16,13 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
     const { customers, loading: loadingCustomers } = useCustomers();
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<Omit<Loan, 'id' | 'createdAt' | 'updatedAt'>>({
-        cliente: loan?.cliente || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
+        cliente: loan?.cliente || 0,
+        clienteDetalle: loan?.clienteDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
         montoInicial: loan?.montoInicial || 0,
         saldoActual: loan?.saldoActual || 0,
         tasaInteresMensual: loan?.tasaInteresMensual || 0,
         interesMensualGenerado: loan?.interesMensualGenerado || 0,
-        fechaInicio: loan?.fechaInicio || 0,
+        fechaInicio: loan?.fechaInicio || '',
         fechaFin: loan?.fechaFin || '',
         fechaCreacion: loan?.fechaCreacion || '',
         fechaActualizacion: loan?.fechaActualizacion || '',
@@ -32,12 +33,13 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
     useEffect(() => {
         if (loan) {
             setFormData({
-                cliente: loan.cliente || '',
+                cliente: loan.cliente || 0,
+                clienteDetalle: loan.clienteDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
                 montoInicial: loan.montoInicial || 0,
                 saldoActual: loan.saldoActual || 0,
                 tasaInteresMensual: loan.tasaInteresMensual || 0,
                 interesMensualGenerado: loan.interesMensualGenerado || 0,
-                fechaInicio: loan.fechaInicio || 0,
+                fechaInicio: loan.fechaInicio || '',
                 fechaFin: loan.fechaFin || '',
                 fechaCreacion: loan.fechaCreacion || '',
                 fechaActualizacion: loan.fechaActualizacion || '',
@@ -53,7 +55,7 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
         if (type === 'number') {
             setFormData({
                 ...formData,
-                [name]: parseInt(value, 10)
+                [name]: parseFloat(value)
             });
         } else {
             setFormData({
@@ -68,7 +70,7 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
         setError(null);
 
         // Validaciones básicas
-        if (!formData.cliente.id) {
+        if (!formData.cliente) {
             setError('El cliente es obligatorio');
             return;
         }
@@ -96,14 +98,14 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
     }, [customers]);
 
     const selectedCustomerOption = useMemo(() => {
-        if (!formData.cliente) return null;
-        return customerOptions.find(option => option.value === formData.cliente.id);
+        if (!formData.clienteDetalle) return null;
+        return customerOptions.find(option => option.value === formData.cliente);
     }, [formData.cliente, customerOptions]);
 
     const handleCustomerChange = (selectedOption: { value: number; label: string; customer: Customer } | null) => {
         setFormData(prev => ({
             ...prev,
-            cliente: selectedOption ? selectedOption.customer : { id: 0, nombre: '', apellido: '', numeroDocumento: '' }
+            cliente: selectedOption ? selectedOption.customer.id : 0
         }));
     };
 
@@ -205,25 +207,12 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                             />
                         </div>
 
-                        {loan && (
-                            <div className="mb-4">
-                                <label className="block text-gray-300 mb-2">Saldo Actual</label>
-                                <input
-                                    type="number"
-                                    name="saldoActual"
-                                    value={formData.saldoActual}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-gray-800 text-white"
-                                />
-                            </div>
-                        )}
-
                         <div className="mb-4">
                             <label className="block text-gray-300 mb-2">Tasa de Interés Mensual</label>
                             <input
                                 type="number"
                                 name="tasaInteresMensual"
-                                value={formData.tasaInteresMensual}
+                                value={Number(formData.tasaInteresMensual).toFixed(1)}
                                 onChange={handleChange}
                                 className="w-full p-2 border rounded bg-gray-800 text-white"
                                 required
@@ -234,8 +223,13 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                             <input
                                 type="text"
                                 name="interesMensualGenerado"
-                                value={(formData.montoInicial * formData.tasaInteresMensual / 100).toFixed(2)}
-                                className="w-full p-2 border rounded bg-gray-800 text-white bg-gray-700"
+                                value={(formData.montoInicial * formData.tasaInteresMensual / 100).toLocaleString('es-CO', {
+                                    style: 'currency',
+                                    currency: 'COP',
+                                    minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0
+                                })}
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
                                 disabled
                                 readOnly
                             />
@@ -246,24 +240,11 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                             <input
                                 type="date"
                                 name="fechaInicio"
-                                value={formData.fechaInicio}
+                                value={formData.fechaInicio || new Date().toISOString().split('T')[0]}
                                 onChange={handleChange}
                                 className="w-full p-2 border rounded bg-gray-800 text-white"
                             />
                         </div>
-
-                        {loan && (
-                            <div className="mb-4">
-                                <label className="block text-gray-300 mb-2">Fecha de Fin</label>
-                                <input
-                                    type="text"
-                                    name="fechaFin"
-                                    value={formData.fechaFin}
-                                    onChange={handleChange}
-                                    className="w-full p-2 border rounded bg-gray-800 text-white"
-                                />
-                            </div>
-                        )}
 
                         <div className="mb-4">
                             <label className="block text-gray-300 mb-2">Estado</label>

@@ -1,13 +1,27 @@
 export interface Loan {
     id: string;
-    cliente: { id: number, nombre: string, apellido: string, numeroDocumento: string };
+    cliente: number;
+    clienteDetalle: { id: number, nombre: string, apellido: string, numeroDocumento: string };
     montoInicial: number;
     saldoActual: number;
     tasaInteresMensual: number;
     interesMensualGenerado: number;
-    fechaInicio: number;
+    fechaInicio: string;
     estado: string;
     fechaFin: string;
     fechaCreacion?: string;
     fechaActualizacion?: string;
-} 
+}
+
+export interface Payment {
+    id: string;
+    prestamo: string;
+    montoInteres: number;
+    montoPagado: number;
+    fechaGeneracion: string;
+    fechaVencimiento: string;
+    fechaPago: string;
+    pagado: boolean;
+    notas: string;
+    notaPago: string;
+}

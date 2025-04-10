@@ -8,6 +8,7 @@ import Loans from "./components/Loans/Loans"
 import { useEffect, useState } from "react";
 import { useSession } from "./context/sessionContext";
 import UserProfile from "./components/Users/UserProfile";
+import LoansDetail from "./components/Loans/LoansDetail";
 
 const RootStack = () => {
   const { accessToken, user } = useSession();
@@ -42,6 +43,7 @@ const RootStack = () => {
       <Route path="/app" element={<Layout />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="loans" element={<Loans />} />
+        <Route path="loan-detail/:id" element={<LoansDetail />} />
         <Route path="users" element={<Users />} />
         <Route path="profile" element={<UserProfile />} />
         <Route path="customers" element={<Customers />} />

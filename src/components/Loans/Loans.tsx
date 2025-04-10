@@ -4,7 +4,7 @@ import { Loan } from '../../interfaces/Loan';
 import LoansForm from './LoansForm';
 import { toast } from 'react-hot-toast';
 import { Button } from '../ui/button'
-
+import { useNavigate } from 'react-router-dom';
 const Loans: React.FC = () => {
     const {
         loans,
@@ -20,10 +20,11 @@ const Loans: React.FC = () => {
     const [showForm, setShowForm] = useState(false);
     const [selectedLoan, setSelectedLoan] = useState<Loan | undefined>(undefined);
     const [searchTerm, setSearchTerm] = useState("")
+    const navigate = useNavigate();
 
     // Filtrar clientes por zona
     const filteredLoans = loans?.filter(loan => {
-        const matchesSearch = loan.cliente.nombre.toLowerCase().includes(searchTerm.toLowerCase()) || loan.cliente.apellido.toLowerCase().includes(searchTerm.toLowerCase()) || loan.cliente.numeroDocumento.toLowerCase().includes(searchTerm.toLowerCase())
+        const matchesSearch = loan.clienteDetalle.nombre.toLowerCase().includes(searchTerm.toLowerCase()) || loan.clienteDetalle.apellido.toLowerCase().includes(searchTerm.toLowerCase()) || loan.clienteDetalle.numeroDocumento.toLowerCase().includes(searchTerm.toLowerCase())
         return matchesSearch
     })
 
@@ -67,6 +68,10 @@ const Loans: React.FC = () => {
                 setFormError('Error al eliminar el cliente. Por favor, intenta de nuevo.');
             }
         }
+    };
+
+    const handleViewLoan = (id: string) => {
+        navigate(`/app/loan-detail/${id}`);
     };
 
     if (loading && loans.length === 0) {
@@ -132,9 +137,9 @@ const Loans: React.FC = () => {
                         <thead className="bg-gray-800">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Cliente</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Monto Inicial</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fecha Prestamo</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Saldo Actual</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tasa de Interés Mensual</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tasa de Interés</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Estado</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Acciones</th>
                             </tr>
@@ -145,25 +150,30 @@ const Loans: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div>
                                             <div className="text-sm font-medium">
-                                                {loan.cliente.nombre} {loan.cliente.apellido} - {loan.cliente.numeroDocumento}
+                                                {loan.clienteDetalle.nombre} {loan.clienteDetalle.apellido}
+                                            </div>
+                                            <div className="text-sm text-gray-500">
+                                                {loan.clienteDetalle.numeroDocumento}
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div>
                                             <div className="text-sm font-medium">
-                                                {loan.montoInicial}
+                                                {loan.fechaInicio}
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full`}>
-                                            {loan.saldoActual}
-                                        </span>
+                                        {Number(loan.saldoActual).toLocaleString('es-CO', {
+                                            style: 'currency',
+                                            currency: 'COP',
+                                            minimumFractionDigits: 0,
+                                            maximumFractionDigits: 0
+                                        })}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        {loan.tasaInteresMensual}
-
+                                        {Number(loan.tasaInteresMensual).toFixed(1)}%
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${loan.estado === 'Activo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -183,6 +193,11 @@ const Loans: React.FC = () => {
                                         <Button
                                             onClick={() => handleDeleteLoan(loan.id.toString())}
                                             variant={'delete'}
+                                        >
+                                        </Button>
+                                        <Button
+                                            onClick={() => handleViewLoan(loan.id.toString())}
+                                            variant={'view'}
                                         >
                                         </Button>
                                     </td>
