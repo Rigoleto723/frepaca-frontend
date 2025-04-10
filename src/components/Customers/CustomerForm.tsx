@@ -108,7 +108,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ customer, onSave, onClose }
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="mb-4">
-                            <label className="block text-gray-300 mb-2">Nombre</label>
+                            <label className="block text-gray-300 mb-2">Nombres</label>
                             <input
                                 type="text"
                                 name="nombre"
@@ -120,7 +120,7 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ customer, onSave, onClose }
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-gray-300 mb-2">Nombre del Negocio</label>
+                            <label className="block text-gray-300 mb-2">Apellidos</label>
                             <input
                                 type="text"
                                 name="apellido"

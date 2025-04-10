@@ -18,6 +18,8 @@ export interface Payment {
     prestamo: string;
     montoInteres: number;
     montoPagado: number;
+    monto: number;
+    tipo: string;
     fechaGeneracion: string;
     fechaVencimiento: string;
     fechaPago: string;

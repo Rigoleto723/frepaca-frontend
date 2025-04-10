@@ -1,4 +1,4 @@
-import { ChevronDown, Coins, LogOut, Settings2, UserCog, Users, ChartBar, LayoutDashboard } from "lucide-react";
+import { ChevronDown, Coins, LogOut, Settings2, UserCog, Users, ChartBar, LayoutDashboard, CreditCard } from "lucide-react";
 import { ReactNode, useRef, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "../../context/sessionContext";
@@ -26,7 +26,12 @@ const sidebarList: SidebarItemInfo[] = [
         icon: <Coins />,
         groups: ['admin', 'user']
     },
-
+    {
+        path: "/app/payments",
+        name: "Pagos",
+        icon: <CreditCard />,
+        groups: ['admin', 'user']
+    },
     {
         path: "/app/customers",
         name: "Clientes",

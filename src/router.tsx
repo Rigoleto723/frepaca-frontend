@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "./context/sessionContext";
 import UserProfile from "./components/Users/UserProfile";
 import LoansDetail from "./components/Loans/LoansDetail";
-
+import Pays from "./components/Pays/Pays";
 const RootStack = () => {
   const { accessToken, user } = useSession();
   const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +44,7 @@ const RootStack = () => {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="loans" element={<Loans />} />
         <Route path="loan-detail/:id" element={<LoansDetail />} />
+        <Route path="payments" element={<Pays />} />
         <Route path="users" element={<Users />} />
         <Route path="profile" element={<UserProfile />} />
         <Route path="customers" element={<Customers />} />
