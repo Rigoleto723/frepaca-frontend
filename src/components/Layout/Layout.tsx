@@ -4,7 +4,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useSession } from "../../context/sessionContext";
 import client from "../../axiosConfig";
 import SidebarItem from "./SidebarItem";
-import logotipo from "../../assets/logo frepaca.jpeg"
+import logotipo from "../../assets/logo.jpg"
 
 export interface SidebarItemInfo {
     icon: ReactNode,
