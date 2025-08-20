@@ -2,10 +2,14 @@ export interface Loan {
     id: string;
     cliente: number;
     clienteDetalle: { id: number, nombre: string, apellido: string, numeroDocumento: string };
+    fiador?: number;
+    fiadorDetalle?: { id: number, nombre: string, apellido: string, numeroDocumento: string };
     montoInicial: number;
     saldoActual: number;
     tasaInteresMensual: number;
     interesMensualGenerado: number;
+    interesesPendientesIniciales?: number;
+    notas?: string;
     fechaInicio: string;
     estado: string;
     fechaFin: string;

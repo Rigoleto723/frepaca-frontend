@@ -18,11 +18,15 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
     const [formData, setFormData] = useState<Omit<Loan, 'id' | 'createdAt' | 'updatedAt'>>({
         cliente: loan?.cliente || 0,
         clienteDetalle: loan?.clienteDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
+        fiador: loan?.fiador || 0,
+        fiadorDetalle: loan?.fiadorDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
         montoInicial: loan?.montoInicial || 0,
         saldoActual: loan?.saldoActual || 0,
         tasaInteresMensual: loan?.tasaInteresMensual || 0,
         interesMensualGenerado: loan?.interesMensualGenerado || 0,
-        fechaInicio: loan?.fechaInicio || '',
+        interesesPendientesIniciales: loan?.interesesPendientesIniciales || 0,
+        notas: loan?.notas || '',
+        fechaInicio: loan?.fechaInicio || new Date().toISOString().split("T")[0],
         fechaFin: loan?.fechaFin || '',
         fechaCreacion: loan?.fechaCreacion || '',
         fechaActualizacion: loan?.fechaActualizacion || '',
@@ -35,11 +39,14 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
             setFormData({
                 cliente: loan.cliente || 0,
                 clienteDetalle: loan.clienteDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
+                fiador: loan.fiador || 0,
+                fiadorDetalle: loan.fiadorDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
                 montoInicial: loan.montoInicial || 0,
                 saldoActual: loan.saldoActual || 0,
                 tasaInteresMensual: loan.tasaInteresMensual || 0,
                 interesMensualGenerado: loan.interesMensualGenerado || 0,
-                fechaInicio: loan.fechaInicio || '',
+                notas: loan.notas || '',
+                fechaInicio: loan.fechaInicio || new Date().toISOString().split('T')[0],
                 fechaFin: loan.fechaFin || '',
                 fechaCreacion: loan.fechaCreacion || '',
                 fechaActualizacion: loan.fechaActualizacion || '',
@@ -185,6 +192,67 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
 
                             />
                         </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-300 mb-2">Fiador</label>
+                            <Select
+                                value={
+                                    formData.fiador
+                                        ? customerOptions.find(option => option.value === formData.fiador)
+                                        : null
+                                }
+                                onChange={(selectedOption) =>
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        fiador: selectedOption ? selectedOption.customer.id : 0
+                                    }))
+                                }
+                                options={customerOptions}
+                                isDisabled={loadingCustomers}
+                                isLoading={loadingCustomers}
+                                placeholder="Selecciona un Fiador"
+                                noOptionsMessage={() => loadingCustomers ? 'Cargando Fiadores...' : 'No hay Fiadores disponibles'}
+                                styles={{
+                                    container: (base) => ({
+                                        ...base,
+                                        width: '100%'
+                                    }),
+                                    control: (base) => ({
+                                        ...base,
+                                        background: '#374151',
+                                        borderColor: '#4B5563',
+                                        '&:hover': {
+                                            borderColor: '#6B7280'
+                                        }
+                                    }),
+                                    menu: (base) => ({
+                                        ...base,
+                                        background: '#374151',
+                                        border: '1px solid #4B5563'
+                                    }),
+                                    option: (base, state) => ({
+                                        ...base,
+                                        background: state.isFocused ? '#4B5563' : '#374151',
+                                        color: 'white',
+                                        '&:hover': {
+                                            background: '#4B5563'
+                                        }
+                                    }),
+                                    singleValue: (base) => ({
+                                        ...base,
+                                        color: 'white'
+                                    }),
+                                    input: (base) => ({
+                                        ...base,
+                                        color: 'white'
+                                    }),
+                                    placeholder: (base) => ({
+                                        ...base,
+                                        color: '#9CA3AF'
+                                    })
+                                }}
+
+                            />
+                        </div>
 
                         <div className="mb-4">
                             <label className="block text-gray-300 mb-2">Monto Inicial</label>
@@ -234,6 +302,16 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                                 readOnly
                             />
                         </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-300 mb-2">Deuda inicial de intereses</label>
+                            <input
+                                type="number"
+                                name="interesesPendientesIniciales"
+                                value={formData.interesesPendientesIniciales}
+                                onChange={handleChange}
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
+                            />
+                        </div>
 
                         <div className="mb-4">
                             <label className="block text-gray-300 mb-2">Fecha de Inicio</label>
@@ -257,6 +335,16 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                                 <option value="Activo">Activo</option>
                                 <option value="Inactivo">Inactivo</option>
                             </select>
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-300 mb-2">Notas</label>
+                            <textarea
+                                name="notas"
+                                value={formData.notas || ""}
+                                onChange={handleChange}
+                                placeholder="Agrega información adicional sobre el préstamo..."
+                                className="w-full p-2 border rounded bg-gray-800 text-white resize-y min-h-[100px]"
+                            />
                         </div>
 
                     </div>

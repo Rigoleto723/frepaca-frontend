@@ -187,6 +187,19 @@ const LoansDetail: React.FC = () => {
                         <p className="text-gray-200">{loan.clienteDetalle.numeroDocumento}</p>
                     </div>
                     <div>
+                        <p className="text-lg font-semibold text-gray-200">Fiador:</p>
+                        {loan.fiadorDetalle ? (
+                            <>
+                                <p className="text-white">
+                                    {loan.fiadorDetalle.nombre} {loan.fiadorDetalle.apellido}
+                                </p>
+                                <p className="text-gray-200">{loan.fiadorDetalle.numeroDocumento}</p>
+                            </>
+                        ) : (
+                            <p className="text-gray-400 italic">Sin fiador</p>
+                        )}
+                    </div>
+                    <div>
                         <p className="text-lg font-semibold text-gray-200">Fecha del Prestamo:</p>
                         <p className="text-white">{loan.fechaInicio}</p>
                     </div>
@@ -215,6 +228,10 @@ const LoansDetail: React.FC = () => {
                     <div>
                         <p className="text-lg font-semibold text-gray-200">Tasa de Interés Mensual:</p>
                         <p className="text-white">{Number(loan.tasaInteresMensual).toFixed(1)}%</p>
+                    </div>
+                    <div>
+                        <p className="text-lg font-semibold text-gray-200">Notas:</p>
+                        <p className="text-white">{loan.notas}</p>
                     </div>
                 </div>
             </div>
