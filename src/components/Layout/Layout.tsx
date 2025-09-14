@@ -39,6 +39,12 @@ const sidebarList: SidebarItemInfo[] = [
         groups: ['admin', 'user']
     },
     {
+        path: "/app/investors",
+        name: "Inversores",
+        icon: <Users />,
+        groups: ['admin', 'user']
+    },
+    {
         path: "/app/reports",
         name: "Reportes",
         icon: <ChartBar />,

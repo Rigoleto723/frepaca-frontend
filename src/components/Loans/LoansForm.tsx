@@ -4,6 +4,9 @@ import { Loan } from '../../interfaces/Loan';
 import { Button } from '../ui/button'
 import { Customer } from '../../interfaces/Customer';
 import useCustomers from '../../hooks/useCustomers';
+import { Investor } from '../../interfaces/Investors';
+import useInvestors from '../../hooks/useInvestors';
+
 
 
 interface LoansFormProps {
@@ -14,12 +17,15 @@ interface LoansFormProps {
 
 const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
     const { customers, loading: loadingCustomers } = useCustomers();
+    const { investors, loading: loadingInvestors } = useInvestors();
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState<Omit<Loan, 'id' | 'createdAt' | 'updatedAt'>>({
         cliente: loan?.cliente || 0,
         clienteDetalle: loan?.clienteDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
         fiador: loan?.fiador || 0,
         fiadorDetalle: loan?.fiadorDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
+        inversionista: loan?.inversionista || 0,
+        inversionistaDetalle: loan?.inversionistaDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
         montoInicial: loan?.montoInicial || 0,
         saldoActual: loan?.saldoActual || 0,
         tasaInteresMensual: loan?.tasaInteresMensual || 0,
@@ -41,6 +47,8 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
                 clienteDetalle: loan.clienteDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
                 fiador: loan.fiador || 0,
                 fiadorDetalle: loan.fiadorDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
+                inversionista: loan?.inversionista || 0,
+                inversionistaDetalle: loan?.inversionistaDetalle || { id: 0, nombre: '', apellido: '', numeroDocumento: '' },
                 montoInicial: loan.montoInicial || 0,
                 saldoActual: loan.saldoActual || 0,
                 tasaInteresMensual: loan.tasaInteresMensual || 0,
@@ -113,6 +121,26 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
         setFormData(prev => ({
             ...prev,
             cliente: selectedOption ? selectedOption.customer.id : 0
+        }));
+    };
+
+    const investorOptions = useMemo(() => {
+        return investors.map(investor => ({
+            value: investor.id,
+            label: `${investor.nombre} ${investor.apellido} - ${investor.numeroDocumento}`,
+            investor: investor
+        }));
+    }, [investors]);
+
+    const selectedInvestorOption = useMemo(() => {
+        if (!formData.inversionistaDetalle) return null;
+        return investorOptions.find(option => option.value === formData.inversionista);
+    }, [formData.inversionista, investorOptions]);
+
+    const handleInvestorChange = (selectedOption: { value: number; label: string; investor: Investor } | null) => {
+        setFormData(prev => ({
+            ...prev,
+            inversionista: selectedOption ? selectedOption.investor.id : 0
         }));
     };
 
@@ -253,7 +281,59 @@ const LoansForm: React.FC<LoansFormProps> = ({ loan, onSave, onClose }) => {
 
                             />
                         </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-300 mb-2">Inversionista</label>
+                            <Select
+                                value={selectedInvestorOption}
+                                onChange={handleInvestorChange}
+                                required
+                                options={investorOptions}
+                                isDisabled={loadingInvestors}
+                                isLoading={loadingInvestors}
+                                placeholder="Selecciona un Inversionista"
+                                noOptionsMessage={() => loadingInvestors ? 'Cargando Inversionistas...' : 'No hay Inversionistas disponibles'}
+                                styles={{
+                                    container: (base) => ({
+                                        ...base,
+                                        width: '100%'
+                                    }),
+                                    control: (base) => ({
+                                        ...base,
+                                        background: '#374151',
+                                        borderColor: '#4B5563',
+                                        '&:hover': {
+                                            borderColor: '#6B7280'
+                                        }
+                                    }),
+                                    menu: (base) => ({
+                                        ...base,
+                                        background: '#374151',
+                                        border: '1px solid #4B5563'
+                                    }),
+                                    option: (base, state) => ({
+                                        ...base,
+                                        background: state.isFocused ? '#4B5563' : '#374151',
+                                        color: 'white',
+                                        '&:hover': {
+                                            background: '#4B5563'
+                                        }
+                                    }),
+                                    singleValue: (base) => ({
+                                        ...base,
+                                        color: 'white'
+                                    }),
+                                    input: (base) => ({
+                                        ...base,
+                                        color: 'white'
+                                    }),
+                                    placeholder: (base) => ({
+                                        ...base,
+                                        color: '#9CA3AF'
+                                    })
+                                }}
 
+                            />
+                        </div>
                         <div className="mb-4">
                             <label className="block text-gray-300 mb-2">Monto Inicial</label>
                             <input

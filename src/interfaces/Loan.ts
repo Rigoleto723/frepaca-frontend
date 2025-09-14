@@ -4,6 +4,8 @@ export interface Loan {
     clienteDetalle: { id: number, nombre: string, apellido: string, numeroDocumento: string };
     fiador?: number;
     fiadorDetalle?: { id: number, nombre: string, apellido: string, numeroDocumento: string };
+    inversionista: number;
+    inversionistaDetalle: { id: number, nombre: string, apellido: string, numeroDocumento: string };
     montoInicial: number;
     saldoActual: number;
     tasaInteresMensual: number;

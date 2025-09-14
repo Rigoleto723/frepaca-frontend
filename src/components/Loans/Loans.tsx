@@ -140,6 +140,7 @@ const Loans: React.FC = () => {
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Fecha Prestamo</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Saldo Actual</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Tasa de Interés</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Inversionista</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Estado</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Acciones</th>
                             </tr>
@@ -174,6 +175,9 @@ const Loans: React.FC = () => {
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         {Number(loan.tasaInteresMensual).toFixed(1)}%
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        {loan.inversionistaDetalle.nombre} {loan.inversionistaDetalle.apellido}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${loan.estado === 'Activo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'

@@ -67,6 +67,11 @@ const LoansDetail: React.FC = () => {
     const [pdfPreviewUri, setPdfPreviewUri] = useState<string | null>(null);
     const [showPdfPreview, setShowPdfPreview] = useState(false);
 
+    // Calcular intereses pendientes
+    const interesesPendientes = payments
+        .filter((p) => !p.pagado)
+        .reduce((acc, p) => acc + Number(p.montoInteres), 0);
+
     useEffect(() => {
         const fetchLoanDetails = async () => {
             try {
@@ -200,6 +205,18 @@ const LoansDetail: React.FC = () => {
                         )}
                     </div>
                     <div>
+                        <p className="text-lg font-semibold text-gray-200">Inversionista:</p>
+                        {loan.inversionistaDetalle ? (
+                            <>
+                                <p className="text-white">
+                                    {loan.inversionistaDetalle.nombre} {loan.inversionistaDetalle.apellido}
+                                </p>
+                            </>
+                        ) : (
+                            <p className="text-gray-400 italic">Sin fiador</p>
+                        )}
+                    </div>
+                    <div>
                         <p className="text-lg font-semibold text-gray-200">Fecha del Prestamo:</p>
                         <p className="text-white">{loan.fechaInicio}</p>
                     </div>
@@ -215,6 +232,10 @@ const LoansDetail: React.FC = () => {
                         </p>
                     </div>
                     <div>
+                        <p className="text-lg font-semibold text-gray-200">Tasa de Interés Mensual:</p>
+                        <p className="text-white">{Number(loan.tasaInteresMensual).toFixed(1)}%</p>
+                    </div>
+                    <div>
                         <p className="text-lg font-semibold text-gray-200">Saldo Actual:</p>
                         <p className="text-white">
                             {Number(loan.saldoActual).toLocaleString('es-CO', {
@@ -226,8 +247,15 @@ const LoansDetail: React.FC = () => {
                         </p>
                     </div>
                     <div>
-                        <p className="text-lg font-semibold text-gray-200">Tasa de Interés Mensual:</p>
-                        <p className="text-white">{Number(loan.tasaInteresMensual).toFixed(1)}%</p>
+                        <p className="text-lg font-semibold text-gray-200">Intereses Pendientes:</p>
+                        <p className="text-white">
+                            {interesesPendientes.toLocaleString('es-CO', {
+                                style: 'currency',
+                                currency: 'COP',
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0
+                            })}
+                        </p>
                     </div>
                     <div>
                         <p className="text-lg font-semibold text-gray-200">Notas:</p>
